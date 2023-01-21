@@ -26,9 +26,9 @@ const ProductSchema = new mongoose.Schema({
     required: [true, "Please provide product category"],
     enum: ["office", "kitchen", "bedroom"],
   },
-  store: {
+  shop: {
     type: String,
-    required: [true, "Please provide a category"],
+    required: [true, "Please provide a store"],
   },
 });
 module.exports = mongoose.model("Product", ProductSchema);

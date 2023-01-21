@@ -9,7 +9,7 @@ const connectDB = require("./db/connect");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/auth", authRouter);
+app.use("/api", authRouter);
 app.use("/api/product", productRouter);
 
 const port = process.env.PORT || 8000;
