@@ -16,7 +16,6 @@ const register = async (req, res) => {
   }
 };
 const login = async (req, res) => {
-  console.log(process.env.JWT_SECRET);
   const { email, password } = req.body;
   const result = await User.findOne({ email: email });
   if (result === null) {
@@ -29,9 +28,11 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
-    res.status(200).json({ msg: "Successful login", data: token });
+    res
+      .status(200)
+      .json({ msg: "Successful login", data: token, userId: result._id });
   } else if (!bcrypt.compare(password, result.password)) {
+    res.status(401).json({ msg: "Invalid Credentials" });
   }
 };
-
 module.exports = { register, login };

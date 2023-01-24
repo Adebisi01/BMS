@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide an email"],
     lowercase: true,
     maxlength: [100, "Email cannot be more than 100 characters"],
+    lowercase: true,
   },
   phone: {
     type: String,
@@ -24,6 +25,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     trim: true,
     enum: ["male", "female"],
+    lowercase: true,
   },
   password: {
     type: String,
