@@ -4,6 +4,10 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const refresh = (email, token) => {
+  let decoded = jwt.verify(token, process.env.JWT_SECRET);
+  return email === decoded.email;
+};
 const register = async (req, res) => {
   const isExist = await User.findOne({ email: req.body.email });
   if (isExist !== null) {
@@ -24,7 +28,7 @@ const login = async (req, res) => {
       .json({ msg: "This user does not exist", data: result });
   } else if (bcrypt.compare(password, result.password)) {
     const token = jwt.sign(
-      { username: result.name, userId: result._id },
+      { username: result.name, email: result.email, userId: result._id },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
@@ -35,4 +39,25 @@ const login = async (req, res) => {
     res.status(401).json({ msg: "Invalid Credentials" });
   }
 };
-module.exports = { register, login };
+const refreshToken = (req, res) => {
+  const { email, refreshToken } = req.body;
+  const validRefresh = refresh(email, refreshToken);
+  if (!validRefresh) {
+    return res.status(401).json({ msg: "Invalid refesh tokem" });
+  } else {
+    const token = jwt.sign(
+      { username: result.name, email: result.email, userId: result._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "5m" }
+    );
+    const refreshToken = jwt.sign(
+      { username: result.name, email: result.email, userId: result._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "30m" }
+    );
+    return res
+      .status(201)
+      .json({ msg: "Refresh Successful", token, refreshToken });
+  }
+};
+module.exports = { register, login, refreshToken };
